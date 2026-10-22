@@ -1,0 +1,63 @@
+version: '3.8' # ou sans version
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: photo-album-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # 👈 Récupéré du .env
+      MYSQL_DATABASE: albumphotodatabase
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+    networks:
+      - album-net
+
+  backend:
+    build:
+      context: ./backend/SpringRestdemo
+      dockerfile: Dockerfile
+    container_name: photo-album-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # Surcharge pour la prod (Docker)
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/albumphotodatabase?useSSL=false&useUnicode=yes&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_ROOT_PASSWORD} # 👈 Récupéré du .env
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    volumes:
+      - uploads-data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - album-net
+
+  frontend:
+    build:
+      context: ./frontend/mantis-free-react-admin-template-main
+      dockerfile: Dockerfile
+    container_name: photo-album-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - album-net
+
+volumes:
+  db-data:
+  uploads-data:
+
+networks:
+  album-net:
+    driver: bridge

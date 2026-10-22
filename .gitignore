@@ -1,0 +1,28 @@
+# Secrets
+.env
+secret.properties
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Backend
+backend/**/target/
+backend/**/.mvn/
+backend/**/db/
+backend/**/appLog.log
+
+# Frontend
+frontend/**/node_modules/
+frontend/**/build/
+
+# Docker
+*.log
+
+# Screenshots & docs (facultatif)
+screenshot.png
+Screenshot*.png
+api-docs.json
+h2_database_setup.txt
+Dockercontainerisation/
