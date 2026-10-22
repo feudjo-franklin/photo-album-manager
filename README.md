@@ -12,5 +12,5 @@ A client-server application to manage photo albums.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ton-profil/photo-album-manager.git
+   git clone https://github.com/feudjo-franklin/photo-album-manager.git
    cd photo-album-manager
